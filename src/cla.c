@@ -45,20 +45,20 @@ void s1() {
 void hexToBin(char hex, int* bin) {
 	switch (hex) {
 		case '0': *bin = 0; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 0; break;
-		case '1': *bin = 0; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 1; break;
-		case '2': *bin = 0; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 0; break;
-		case '3': *bin = 0; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 1; break;
-		case '4': *bin = 0; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 0; break;
-		case '5': *bin = 0; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 1; break;
+		case '1': *bin = 1; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 0; break;
+		case '2': *bin = 0; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 0; break;
+		case '3': *bin = 1; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 0; break;
+		case '4': *bin = 0; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 0; break;
+		case '5': *bin = 1; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 0; break;
 		case '6': *bin = 0; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 0; break;
-		case '7': *bin = 0; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 1; break;
-		case '8': *bin = 1; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 0; break;
+		case '7': *bin = 1; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 0; break;
+		case '8': *bin = 0; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 1; break;
 		case '9': *bin = 1; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 1; break;
-		case 'A': *bin = 1; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 0; break;
-		case 'B': *bin = 1; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 1; break;
-		case 'C': *bin = 1; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 0; break;
-		case 'D': *bin = 1; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 1; break;
-		case 'E': *bin = 1; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 0; break;
+		case 'A': *bin = 0; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 1; break;
+		case 'B': *bin = 1; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 1; break;
+		case 'C': *bin = 0; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 1; break;
+		case 'D': *bin = 1; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 1; break;
+		case 'E': *bin = 0; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 1; break;
 		case 'F': *bin = 1; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 1; break;
 	}
 }
@@ -69,7 +69,7 @@ void cla() {
 
 void parseInput(char* fName) {
 	scanf("%s", hex1);
-	for (int i = 0; i < input_size; hexToBin(hex1[i],bin1+4*i), ++i);
+	for (int i = 0; i < input_size; hexToBin(hex1[i],bin1+4*(input_size-i-1)), ++i);
 
 	for (int i = 0; i < input_size*4; ++i) {
 		printf("%d",bin1[i]);
@@ -77,7 +77,7 @@ void parseInput(char* fName) {
 	puts("");
 
 	scanf("%s", hex2);
-	for (int i = 0; i < input_size; hexToBin(hex2[i],bin2+4*i), ++i);
+	for (int i = 0; i < input_size; hexToBin(hex2[i],bin2+4*(input_size-i-1)), ++i);
 
 	for (int i = 0; i < input_size*4; ++i) {
 		printf("%d",bin2[i]);
