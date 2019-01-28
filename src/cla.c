@@ -149,7 +149,7 @@ void calc_sscl() {
  */
 void calc_sck() {
 	for (int i = 0; i < nsections; ++i) {
-		sck[i] = (sgk[i] | (spk[i]&(i==0 ? sscl[i/8] : sck[i-1])));
+		sck[i] = (sgk[i] | (spk[i]|(i%8==0 ? sscl[i/8] : sck[i-1])));
 		//sck[i] = (sgk[i] | (spk[i]&sscl[i/8]));
 		//sck[i] = 1;
 	}
@@ -160,7 +160,7 @@ void calc_sck() {
  */
 void calc_gcj() {
 	for (int i = 0; i < ngroups; ++i) {
-		gcj[i] = (ggj[i] | (gpj[i]&(i==0 ? sck[i/8] : gcj[i-1])));
+		gcj[i] = (ggj[i] | (gpj[i]|(i%8==0 ? sck[i/8] : gcj[i-1])));
 		//gcj[i] = (ggj[i] | (gpj[i]&sck[i/8]));
 		//gcj[i] = 1;
 	}
@@ -171,7 +171,7 @@ void calc_gcj() {
  */
 void calc_ci() {
 	for (int i = 0; i < bits; ++i) {
-		ci[i] = (gi[i] | (pi[i]&(i==0 ? gcj[i/8] : ci[i-1])));
+		ci[i] = (gi[i] | (pi[i]&(i%8==0 ? gcj[i/8] : ci[i-1])));
 		//ci[i] = (gi[i] | (pi[i]&gcj[i/8]));
 	}
 }
