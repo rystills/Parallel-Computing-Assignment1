@@ -64,8 +64,8 @@ char binToHex(int* bin) {
  */
 void calc_gi_pi() {
 	for (int i = 0; i < bits; ++i) {
-		gi[i] = bin1[i] * bin2[i];
-		pi[i] = (bin1[i] + bin2[i]); //% 2;
+		gi[i] = bin1[i] & bin2[i];
+		pi[i] = (bin1[i] | bin2[i]); //% 2;
 	}
 }
 
@@ -77,15 +77,16 @@ void calc_gi_pi() {
 void calc_ggj_gpj() {
 	for (int i = 0; i < ngroups; ++i) {
 		int r = block_size*i;
-		ggj[i] = gi[r+7] +
-				pi[r+7]*gi[r+6] +
-				pi[r+7]*pi[r+6]*gi[r+5] +
-				pi[r+7]*pi[r+6]*pi[r+5]*gi[r+4] +
-				pi[r+7]*pi[r+6]*pi[r+5]*pi[r+4]*gi[r+3] +
-				pi[r+7]*pi[r+6]*pi[r+5]*pi[r+4]*pi[r+3]*gi[r+2] +
-				pi[r+7]*pi[r+6]*pi[r+5]*pi[r+4]*pi[r+3]*pi[r+2]*gi[r+1] +
-				pi[r+7]*pi[r+6]*pi[r+5]*pi[r+4]*pi[r+3]*pi[r+2]*pi[r+1]*gi[r];
-		gpj[i] = pi[r+7]*pi[r+6]*pi[r+5]*pi[r+4]*pi[r+3]*pi[r+2]*pi[r+1]*pi[r];
+		ggj[i] = gi[r+7] |
+				(pi[r+7]&gi[r+6]) |
+				(pi[r+7]&pi[r+6]&gi[r+5]) |
+				(pi[r+7]&pi[r+6]&pi[r+5]&gi[r+4]) |
+				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&gi[r+3]) |
+				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&gi[r+2]) |
+				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&pi[r+2]&gi[r+1]) |
+				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&pi[r+2]&pi[r+1]&gi[r]);
+
+		gpj[i] = pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&pi[r+2]&pi[r+1]&pi[r];
 	}
 }
 
@@ -97,15 +98,16 @@ void calc_ggj_gpj() {
 void calc_sgk_spk() {
 	for (int i = 0; i < nsections; ++i) {
 		int r = block_size*i;
-		sgk[i] = ggj[r+7] +
-				gpj[r+7]*ggj[r+6] +
-				gpj[r+7]*gpj[r+6]*ggj[r+5] +
-				gpj[r+7]*gpj[r+6]*gpj[r+5]*ggj[r+4] +
-				gpj[r+7]*gpj[r+6]*gpj[r+5]*gpj[r+4]*ggj[r+3] +
-				gpj[r+7]*gpj[r+6]*gpj[r+5]*gpj[r+4]*gpj[r+3]*ggj[r+2] +
-				gpj[r+7]*gpj[r+6]*gpj[r+5]*gpj[r+4]*gpj[r+3]*gpj[r+2]*ggj[r+1] +
-				gpj[r+7]*gpj[r+6]*gpj[r+5]*gpj[r+4]*gpj[r+3]*gpj[r+2]*gpj[r+1]*ggj[r];
-		spk[i] = gpj[r+7]*gpj[r+6]*gpj[r+5]*gpj[r+4]*gpj[r+3]*gpj[r+2]*gpj[r+1]*gpj[r];
+		sgk[i] = ggj[r+7] |
+				(gpj[r+7]&ggj[r+6]) |
+				(gpj[r+7]&gpj[r+6]&ggj[r+5]) |
+				(gpj[r+7]&gpj[r+6]&gpj[r+5]&ggj[r+4]) |
+				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&ggj[r+3]) |
+				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&ggj[r+2]) |
+				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&gpj[r+2]&ggj[r+1]) |
+				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&gpj[r+2]&gpj[r+1]&ggj[r]);
+
+		spk[i] = gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&gpj[r+2]&gpj[r+1]&gpj[r];
 	}
 }
 
@@ -117,15 +119,16 @@ void calc_sgk_spk() {
 void calc_ssgl_sspl() {
 	for (int i = 0; i < nsupersections; ++i) {
 		int r = block_size*i;
-		ssgl[i] = sgk[r+7] +
-				spk[r+7]*sgk[r+6] +
-				spk[r+7]*spk[r+6]*sgk[r+5] +
-				spk[r+7]*spk[r+6]*spk[r+5]*sgk[r+4] +
-				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*sgk[r+3] +
-				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*sgk[r+2] +
-				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*spk[r+2]*sgk[r+1] +
-				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*spk[r+2]*spk[r+1]*sgk[r];
-		sspl[i] = spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*spk[r+2]*spk[r+1]*spk[r];
+		ssgl[i] = sgk[r+7] |
+				(spk[r+7]&sgk[r+6]) |
+				(spk[r+7]&spk[r+6]&sgk[r+5]) |
+				(spk[r+7]&spk[r+6]&spk[r+5]&sgk[r+4]) |
+				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&sgk[r+3]) |
+				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&sgk[r+2]) |
+				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&spk[r+2]&sgk[r+1]) |
+				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&spk[r+2]&spk[r+1]&sgk[r]);
+
+		sspl[i] = spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&spk[r+2]&spk[r+1]&spk[r];
 	}
 }
 
@@ -134,9 +137,10 @@ void calc_ssgl_sspl() {
  * sscl stores whether or not there is a carry bit for the current 512-bit super section.
  */
 void calc_sscl() {
-	sscl[0] = 0;
+	sscl[0] = (ssgl[0] | sspl[0])&1;
+	//sscl[0] = 0;
 	for (int i = 1; i < nsupersections; ++i) {
-		sscl[i] = ssgl[i] + sspl[i]*sscl[i-1];
+		sscl[i] = (ssgl[i] | (sspl[i]&sscl[i-1]))&1;
 	}
 }
 /**
@@ -145,7 +149,8 @@ void calc_sscl() {
  */
 void calc_sck() {
 	for (int i = 0; i < nsections; ++i) {
-		sck[i] = sgk[i] + spk[i]*sscl[i/8];
+		//sck[i] = (sgk[i] + spk[i]*(i%8==0 ? sscl[i/8] : sck[i-1]));
+		sck[i] = (sgk[i] | (spk[i]&sscl[i/8]));
 	}
 }
 /**
@@ -154,7 +159,8 @@ void calc_sck() {
  */
 void calc_gcj() {
 	for (int i = 0; i < ngroups; ++i) {
-		gcj[i] = ggj[i] + gpj[i]*sck[i/8];
+		//gcj[i] = (ggj[i] + gpj[i]*(i%8==0 ? sck[i/8] : gcj[i-1]));
+		gcj[i] = (ggj[i] | (gpj[i]&sck[i/8]));
 	}
 }
 /**
@@ -163,7 +169,8 @@ void calc_gcj() {
  */
 void calc_ci() {
 	for (int i = 0; i < bits; ++i) {
-		ci[i] = (gi[i] + pi[i]*gcj[i/8])&1;
+		//ci[i] = (gi[i] + pi[i]*(i%8==0 ? gcj[i/8] : ci[i-1]));
+		ci[i] = (gi[i] | (pi[i]&gcj[i/8]));
 	}
 }
 
