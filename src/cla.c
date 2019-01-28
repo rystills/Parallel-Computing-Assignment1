@@ -140,8 +140,15 @@ void calc_ssgl_sspl() {
 	//TODO: this step isn't explained, so this calculation is just a guess
 	for (int i = 0; i < nsupersections; ++i) {
 		int r = block_size*i;
-		//ssgl[i] = ;
-		//sspl[i] = ;
+		ssgl[i] = sgk[r+7] +
+				spk[r+7]*sgk[r+6] +
+				spk[r+7]*spk[r+6]*sgk[r+5] +
+				spk[r+7]*spk[r+6]*spk[r+5]*sgk[r+4] +
+				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*sgk[r+3] +
+				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*sgk[r+2] +
+				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*spk[r+2]*sgk[r+1] +
+				spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*spk[r+2]*spk[r+1]*sgk[r];
+		sspl[i] = spk[r+7]*spk[r+6]*spk[r+5]*spk[r+4]*spk[r+3]*spk[r+2]*spk[r+1]*spk[r];
 	}
 }
 
