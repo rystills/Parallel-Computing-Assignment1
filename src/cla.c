@@ -137,7 +137,7 @@ void calc_sgk_spk() {
  * step 4: calculate ssgl and sspl
  */
 void calc_ssgl_sspl() {
-	//TODO
+	//TODO: this step isn't explained, so this calculation is just a guess
 	for (int i = 0; i < nsupersections; ++i) {
 		int r = block_size*i;
 		//ssgl[i] = ;
@@ -149,15 +149,17 @@ void calc_ssgl_sspl() {
  * step 5: calculate sscl
  */
 void calc_sscl() {
-	//TODO
-	for (int i = 0; i < nsupersections; ++i) {
-		//sscl[i] = ;
+	//TODO: this step isn't explained, so this calculation is just a guess
+	sscl[0] = 0;
+	for (int i = 1; i < nsupersections; ++i) {
+		sscl[i] = ssgl[i] + sspl[i]*sscl[i-1];
 	}
 }
 /**
  * step 6: calculate sck
  */
 void calc_sck() {
+	//TODO: this should be using sscl somewhere
 	sck[0] = sgk[0];
 	for (int i = 1; i < nsections; ++i) {
 		sck[i] = sgk[i] + spk[i]*sck[i-1];
@@ -167,6 +169,7 @@ void calc_sck() {
  * step 7: calculate gcj
  */
 void calc_gcj() {
+	//TODO: this should be using sck somewhere
 	gcj[0] = ggj[0];
 	for (int i = 1; i < ngroups; ++i) {
 		gcj[i] = ggj[i] + gpj[i]*gcj[i-1];
@@ -176,6 +179,7 @@ void calc_gcj() {
  * step 8: calculate ci
  */
 void calc_ci() {
+	//TODO: this should be using gcj somewhere
 	ci[0] = gi[0];
 	for (int i = 1; i < bits; ++i) {
 		ci[i] = gi[i] + pi[i]*ci[i-1];
@@ -186,8 +190,8 @@ void calc_ci() {
  * step 9: calculate sumi
  */
 void calc_sumi() {
-	//TODO: we don't have an ai or bi, so substitued with gi and pi for now
-	sumi[0] = gi[0] ^ pi[0];
+	//TODO: we don't have an ai or bi, so substituted with gi and pi for now; not sure if correct
+	sumi[0] = 0;
 	for (int i = 1; i < bits; ++i) {
 		sumi[i] = gi[i] ^ pi[i] ^ ci[i-1];
 	}
@@ -213,6 +217,7 @@ void cla() {
  */
 void convertAnswerToHex() {
 	for (int i = 0; i < input_size; hexAns[i] = binToHex(sumi+4*(input_size-i-1)), ++i);
+	printf("0%s\n",hexAns);
 }
 
 /**
