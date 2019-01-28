@@ -169,16 +169,16 @@ void calc_ci() {
 	//TODO: this should be using gcj somewhere
 	ci[0] = gi[0];
 	for (int i = 1; i < bits; ++i) {
-		ci[i] = gi[i] + pi[i]*ci[i-1];
+		ci[i] = (gi[i] + pi[i]*ci[i-1])&1;
 	}
 }
 
 /**
- * step 9: calculate sumi
+ * step 9: calculate sumi, using bin1 and bin2, as well as ci
  * sumi stores the final sum for the current bit
  */
 void calc_sumi() {
-	sumi[0] = 0;
+	sumi[0] = bin1[0] ^ bin2[0];
 	for (int i = 1; i < bits; ++i) {
 		sumi[i] = bin1[i] ^ bin2[i] ^ ci[i-1];
 	}
