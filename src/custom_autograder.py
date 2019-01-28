@@ -2,6 +2,7 @@ import os, cmd
 from subprocess import Popen, PIPE
 
 def main():
+    os.system("gcc cla.c")
     path = "C:\\Users\\Ryan\\Desktop\\school files\\RPI\\spring 2019\\Parallel Computing\\programming\\Parallel-Computing-Assignment1\\test_cases"
     #run all the test cases, sticking output in O0-O8
     for i in range(8):

@@ -88,17 +88,21 @@ char binToHex(int* bin) {
 }
 
 /**
- * step 1: calculate gi and pi
+ * step 1: calculate gi and pi, using bin1 and bin2
+ * gi is the generate function. It tells us if we generated a carry in the ith stage (occurs when a[i] and b[i] are both 1) for the current bit.
+ * pi is the propagate function. It tells us if we propagated a carry in the ith stage for the current bit.
  */
 void calc_gi_pi() {
 	for (int i = 0; i < bits; ++i) {
 		gi[i] = bin1[i] * bin2[i];
-		pi[i] = (bin1[i] + bin2[i]) % 2;
+		pi[i] = (bin1[i] + bin2[i]); //% 2;
 	}
 }
 
 /**
- * step 2: calculate ggj and gpj
+ * step 2: calculate ggj and gpj, using gi and pi
+ * ggj is the generate function for the current 8-bit group.
+ * gpj is the propagate function for the current 8-bit group.
  */
 void calc_ggj_gpj() {
 	for (int i = 0; i < ngroups; ++i) {
@@ -116,7 +120,9 @@ void calc_ggj_gpj() {
 }
 
 /**
- * step 3: calculate sgk and spk
+ * step 3: calculate sgk and spk, using ggj and gpj
+ * sgk is the generate function for the current 64-bit section.
+ * spk is the propagate function for the current 64-bit section.
  */
 void calc_sgk_spk() {
 	for (int i = 0; i < nsections; ++i) {
@@ -134,10 +140,11 @@ void calc_sgk_spk() {
 }
 
 /**
- * step 4: calculate ssgl and sspl
+ * step 4: calculate ssgl and sspl, using sgk and spk
+ * ssgl is the generate function for the current 512-bit super section.
+ * sspl is the propagate function for the current 512-bit super section.
  */
 void calc_ssgl_sspl() {
-	//TODO: this step isn't explained, so this calculation is just a guess
 	for (int i = 0; i < nsupersections; ++i) {
 		int r = block_size*i;
 		ssgl[i] = sgk[r+7] +
@@ -153,17 +160,18 @@ void calc_ssgl_sspl() {
 }
 
 /**
- * step 5: calculate sscl
+ * step 5: calculate sscl, using ssgl and sspl, and 0 for ssc-1
+ * sscl stores whether or not there is a carry bit for the current 512-bit super section.
  */
 void calc_sscl() {
-	//TODO: this step isn't explained, so this calculation is just a guess
 	sscl[0] = 0;
 	for (int i = 1; i < nsupersections; ++i) {
 		sscl[i] = ssgl[i] + sspl[i]*sscl[i-1];
 	}
 }
 /**
- * step 6: calculate sck
+ * step 6: calculate sck, using sgk and spk, as well as correct sscl
+ * sck stores whether or not there is a carry bit for the current 64-bit section
  */
 void calc_sck() {
 	//TODO: this should be using sscl somewhere
@@ -173,7 +181,8 @@ void calc_sck() {
 	}
 }
 /**
- * step 7: calculate gcj
+ * step 7: calculate gcj, using ggj and gpj, as well as correct sck
+ * gcj stores whether or not there is a carry bit for the current 8-bit group
  */
 void calc_gcj() {
 	//TODO: this should be using sck somewhere
@@ -183,7 +192,8 @@ void calc_gcj() {
 	}
 }
 /**
- * step 8: calculate ci
+ * step 8: calculate ci, using gi and pi, as well as correct gcj
+ * ci stores whether or not there is a carry bit for the current bit
  */
 void calc_ci() {
 	//TODO: this should be using gcj somewhere
@@ -195,12 +205,12 @@ void calc_ci() {
 
 /**
  * step 9: calculate sumi
+ * sumi stores the final sum for the current bit
  */
 void calc_sumi() {
-	//TODO: we don't have an ai or bi, so substituted with gi and pi for now; not sure if correct
 	sumi[0] = 0;
 	for (int i = 1; i < bits; ++i) {
-		sumi[i] = gi[i] ^ pi[i] ^ ci[i-1];
+		sumi[i] = bin1[i] ^ bin2[i] ^ ci[i-1];
 	}
 }
 
