@@ -144,10 +144,8 @@ void calc_sscl() {
  * sck stores whether or not there is a carry bit for the current 64-bit section
  */
 void calc_sck() {
-	//TODO: this should be using sscl somewhere
-	sck[0] = sgk[0];
-	for (int i = 1; i < nsections; ++i) {
-		sck[i] = sgk[i] + spk[i]*sck[i-1];
+	for (int i = 0; i < nsections; ++i) {
+		sck[i] = sgk[i] + spk[i]*sscl[i/8];
 	}
 }
 /**
@@ -155,10 +153,8 @@ void calc_sck() {
  * gcj stores whether or not there is a carry bit for the current 8-bit group
  */
 void calc_gcj() {
-	//TODO: this should be using sck somewhere
-	gcj[0] = ggj[0];
-	for (int i = 1; i < ngroups; ++i) {
-		gcj[i] = ggj[i] + gpj[i]*gcj[i-1];
+	for (int i = 0; i < ngroups; ++i) {
+		gcj[i] = ggj[i] + gpj[i]*sck[i/8];
 	}
 }
 /**
@@ -166,10 +162,8 @@ void calc_gcj() {
  * ci stores whether or not there is a carry bit for the current bit
  */
 void calc_ci() {
-	//TODO: this should be using gcj somewhere
-	ci[0] = gi[0];
-	for (int i = 1; i < bits; ++i) {
-		ci[i] = (gi[i] + pi[i]*ci[i-1])&1;
+	for (int i = 0; i < bits; ++i) {
+		ci[i] = (gi[i] + pi[i]*gcj[i/8])&1;
 	}
 }
 
