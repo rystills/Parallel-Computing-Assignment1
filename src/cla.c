@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <errno.h>
 
-// EXAMPLE DATA STRUCTURE DESIGN AND LAYOUT FOR CLA
+//EXAMPLE DATA STRUCTURE DESIGN AND LAYOUT FOR CLA
 #define input_size 1024
 #define block_size 8
 //Do not touch these defines
@@ -32,59 +32,29 @@ unsigned int bin2[bits];
 //Character array of inputs in hex form
 char hex1[digits];
 char hex2[digits];
-
+//character array to store the final hex answer
 char hexAns[digits];
 
 /**
- * simple hex to binary conversion
+ * simple hex char to binary conversion
  * @param hex: a single hex value in character form (0-F)
  * @param bin: an int array pointer at which to store the 4 calculated binary values
  */
 void hexToBin(char hex, unsigned int* bin) {
-	switch (hex) {
-		case '0': *bin = 0; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 0; break;
-		case '1': *bin = 1; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 0; break;
-		case '2': *bin = 0; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 0; break;
-		case '3': *bin = 1; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 0; break;
-		case '4': *bin = 0; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 0; break;
-		case '5': *bin = 1; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 0; break;
-		case '6': *bin = 0; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 0; break;
-		case '7': *bin = 1; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 0; break;
-		case '8': *bin = 0; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 1; break;
-		case '9': *bin = 1; *(bin+1) = 0; *(bin+2) = 0; *(bin+3) = 1; break;
-		case 'A': *bin = 0; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 1; break;
-		case 'B': *bin = 1; *(bin+1) = 1; *(bin+2) = 0; *(bin+3) = 1; break;
-		case 'C': *bin = 0; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 1; break;
-		case 'D': *bin = 1; *(bin+1) = 0; *(bin+2) = 1; *(bin+3) = 1; break;
-		case 'E': *bin = 0; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 1; break;
-		case 'F': *bin = 1; *(bin+1) = 1; *(bin+2) = 1; *(bin+3) = 1; break;
-	}
+	int decimal = (9*!!(hex&64))+(hex&15);
+	*bin = decimal&1;
+	*(bin+1) = decimal>>1&1;
+	*(bin+2) = decimal>>2&1;
+	*(bin+3) = decimal>>3&1;
 }
 
 /**
- * simple binary to hex conversion
+ * simple binary to hex char conversion
  * @param bin: an int array pointer at which the 4 calculated binary values are stored
  */
 char binToHex(int* bin) {
-	switch (*bin + 2**(bin+1) + 4**(bin+2) + 8**(bin+3)) {
-	case 0: return '0'; break;
-	case 1: return '1'; break;
-	case 2: return '2'; break;
-	case 3: return '3'; break;
-	case 4: return '4'; break;
-	case 5: return '5'; break;
-	case 6: return '6'; break;
-	case 7: return '7'; break;
-	case 8: return '8'; break;
-	case 9: return '9'; break;
-	case 10: return 'A'; break;
-	case 11: return 'B'; break;
-	case 12: return 'C'; break;
-	case 13: return 'D'; break;
-	case 14: return 'E'; break;
-	case 15: return 'F'; break;
-	}
-	return '0';
+	int decimalVal = *bin + 2**(bin+1) + 4**(bin+2) + 8**(bin+3);
+	return decimalVal < 10 ? decimalVal + '0' : 55+decimalVal;
 }
 
 /**
