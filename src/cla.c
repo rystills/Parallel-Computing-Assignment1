@@ -76,17 +76,16 @@ void calc_gi_pi() {
  */
 void calc_ggj_gpj() {
 	for (int i = 0; i < ngroups; ++i) {
-		int r = block_size*i;
-		ggj[i] = gi[r+7] |
-				(pi[r+7]&gi[r+6]) |
-				(pi[r+7]&pi[r+6]&gi[r+5]) |
-				(pi[r+7]&pi[r+6]&pi[r+5]&gi[r+4]) |
-				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&gi[r+3]) |
-				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&gi[r+2]) |
-				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&pi[r+2]&gi[r+1]) |
-				(pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&pi[r+2]&pi[r+1]&gi[r]);
+		int iblock = block_size*i;
+		ggj[i] = gi[iblock+block_size-1];
+		for (int j = iblock+block_size-2; j >= iblock; --j) {
+			int curLine = pi[iblock+block_size-1] & gi[j];
+			for (int k = block_size-2; k > j; curLine &= pi[k--]);
+			ggj[i] |= curLine;
+		}
 
-		gpj[i] = pi[r+7]&pi[r+6]&pi[r+5]&pi[r+4]&pi[r+3]&pi[r+2]&pi[r+1]&pi[r];
+		gpj[i] = pi[iblock+block_size-1];
+		for (int j = block_size-2; j >= 0; gpj[i] &= pi[iblock+j--]);
 	}
 }
 
@@ -96,18 +95,17 @@ void calc_ggj_gpj() {
  * spk is the propagate function for the current 64-bit section.
  */
 void calc_sgk_spk() {
-	for (int i = 0; i < nsections; ++i) {
-		int r = block_size*i;
-		sgk[i] = ggj[r+7] |
-				(gpj[r+7]&ggj[r+6]) |
-				(gpj[r+7]&gpj[r+6]&ggj[r+5]) |
-				(gpj[r+7]&gpj[r+6]&gpj[r+5]&ggj[r+4]) |
-				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&ggj[r+3]) |
-				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&ggj[r+2]) |
-				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&gpj[r+2]&ggj[r+1]) |
-				(gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&gpj[r+2]&gpj[r+1]&ggj[r]);
+	for (int i = 0; i < ngroups; ++i) {
+		int iblock = block_size*i;
+		sgk[i] = ggj[iblock+block_size-1];
+		for (int j = iblock+block_size-2; j >= iblock; --j) {
+			int curLine = gpj[iblock+block_size-1] & ggj[j];
+			for (int k = block_size-2; k > j; curLine &= gpj[k--]);
+			sgk[i] |= curLine;
+		}
 
-		spk[i] = gpj[r+7]&gpj[r+6]&gpj[r+5]&gpj[r+4]&gpj[r+3]&gpj[r+2]&gpj[r+1]&gpj[r];
+		spk[i] = gpj[iblock+block_size-1];
+		for (int j = block_size-2; j >= 0; spk[i] &= gpj[iblock+j--]);
 	}
 }
 
@@ -117,18 +115,17 @@ void calc_sgk_spk() {
  * sspl is the propagate function for the current 512-bit super section.
  */
 void calc_ssgl_sspl() {
-	for (int i = 0; i < nsupersections; ++i) {
-		int r = block_size*i;
-		ssgl[i] = sgk[r+7] |
-				(spk[r+7]&sgk[r+6]) |
-				(spk[r+7]&spk[r+6]&sgk[r+5]) |
-				(spk[r+7]&spk[r+6]&spk[r+5]&sgk[r+4]) |
-				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&sgk[r+3]) |
-				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&sgk[r+2]) |
-				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&spk[r+2]&sgk[r+1]) |
-				(spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&spk[r+2]&spk[r+1]&sgk[r]);
+	for (int i = 0; i < ngroups; ++i) {
+		int iblock = block_size*i;
+		ssgl[i] = sgk[iblock+block_size-1];
+		for (int j = iblock+block_size-2; j >= iblock; --j) {
+			int curLine = spk[iblock+block_size-1] & sgk[j];
+			for (int k = block_size-2; k > j; curLine &= spk[k--]);
+			ssgl[i] |= curLine;
+		}
 
-		sspl[i] = spk[r+7]&spk[r+6]&spk[r+5]&spk[r+4]&spk[r+3]&spk[r+2]&spk[r+1]&spk[r];
+		sspl[i] = spk[iblock+block_size-1];
+		for (int j = block_size-2; j >= 0; sspl[i] &= spk[iblock+j--]);
 	}
 }
 
@@ -149,7 +146,7 @@ void calc_sscl() {
 void calc_sck() {
 	sck[0] = sgk[0];
 	for (int i = 1; i < nsections; ++i) {
-		sck[i] = (sgk[i] | (spk[i]&(i%8==0 ? sscl[i/8-1] : sck[i-1])));
+		sck[i] = (sgk[i] | (spk[i]&(i%block_size==0 ? sscl[i/block_size-1] : sck[i-1])));
 	}
 }
 /**
@@ -159,7 +156,7 @@ void calc_sck() {
 void calc_gcj() {
 	gcj[0] = ggj[0];
 	for (int i = 1; i < ngroups; ++i) {
-		gcj[i] = (ggj[i] | (gpj[i]&(i%8==0 ? sck[i/8-1] : gcj[i-1])));
+		gcj[i] = (ggj[i] | (gpj[i]&(i%block_size==0 ? sck[i/block_size-1] : gcj[i-1])));
 	}
 }
 /**
@@ -169,7 +166,7 @@ void calc_gcj() {
 void calc_ci() {
 	ci[0] = gi[0];
 	for (int i = 1; i < bits; ++i) {
-		ci[i] = (gi[i] | (pi[i]&(i%8==0 ? gcj[i/8-1] : ci[i-1])));
+		ci[i] = (gi[i] | (pi[i]&(i%block_size==0 ? gcj[i/block_size-1] : ci[i-1])));
 	}
 }
 
