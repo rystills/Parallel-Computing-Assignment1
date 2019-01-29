@@ -80,7 +80,7 @@ void calc_ggj_gpj() {
 		ggj[i] = gi[iblock+block_size-1];
 		for (int j = iblock+block_size-2; j >= iblock; --j) {
 			int curLine = pi[iblock+block_size-1] & gi[j];
-			for (int k = block_size-2; k > j; curLine &= pi[k--]);
+			for (int k = iblock+block_size-2; k > j; curLine &= pi[k--]);
 			ggj[i] |= curLine;
 		}
 
@@ -100,7 +100,7 @@ void calc_sgk_spk() {
 		sgk[i] = ggj[iblock+block_size-1];
 		for (int j = iblock+block_size-2; j >= iblock; --j) {
 			int curLine = gpj[iblock+block_size-1] & ggj[j];
-			for (int k = block_size-2; k > j; curLine &= gpj[k--]);
+			for (int k = iblock+block_size-2; k > j; curLine &= gpj[k--]);
 			sgk[i] |= curLine;
 		}
 
@@ -120,7 +120,7 @@ void calc_ssgl_sspl() {
 		ssgl[i] = sgk[iblock+block_size-1];
 		for (int j = iblock+block_size-2; j >= iblock; --j) {
 			int curLine = spk[iblock+block_size-1] & sgk[j];
-			for (int k = block_size-2; k > j; curLine &= spk[k--]);
+			for (int k = iblock+block_size-2; k > j; curLine &= spk[k--]);
 			ssgl[i] |= curLine;
 		}
 
