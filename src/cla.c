@@ -95,7 +95,7 @@ void calc_ggj_gpj() {
  * spk is the propagate function for the current 64-bit section.
  */
 void calc_sgk_spk() {
-	for (int i = 0; i < ngroups; ++i) {
+	for (int i = 0; i < nsections; ++i) {
 		int iblock = block_size*i;
 		sgk[i] = ggj[iblock+block_size-1];
 		for (int j = iblock+block_size-2; j >= iblock; --j) {
@@ -115,7 +115,7 @@ void calc_sgk_spk() {
  * sspl is the propagate function for the current 512-bit super section.
  */
 void calc_ssgl_sspl() {
-	for (int i = 0; i < ngroups; ++i) {
+	for (int i = 0; i < nsupersections; ++i) {
 		int iblock = block_size*i;
 		ssgl[i] = sgk[iblock+block_size-1];
 		for (int j = iblock+block_size-2; j >= iblock; --j) {
